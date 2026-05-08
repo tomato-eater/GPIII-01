@@ -1,6 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Player : MonoBehaviour
 {
@@ -29,24 +30,29 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //移動入力
         var move = playerInput.actions["Move"].ReadValue<Vector2>();
-
+        //移動している場合、スケールを進行方向に合わせて変える
+        if(move != Vector2.zero)
+            transform.localScale = new(Mathf.CeilToInt(move.x), 1, 1);
+        //移動量を反映
         rb.linearVelocityX = move.x * speed;
-        if (move.x < 0)
              
-
-        //Jump
-        if (jump) {
-            if (playerInput.actions["Jump"].WasPressedThisFrame() && jump) {
-                rb.linearVelocityY = jumpSpeed;
-                jump = false;
-            }
-        }
-
+        //死亡処理
         if (rb.position.y < -8.5f)
         {
             Ccamera.Follow = null;
             Debug.Log("Death");
+        }
+    }
+
+
+    void OnJump()
+    {
+        if (jump)
+        {
+            rb.linearVelocityY = jumpSpeed;
+            jump = false;
         }
     }
 
